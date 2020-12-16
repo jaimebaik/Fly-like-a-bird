@@ -8,19 +8,21 @@ authController.userSignin = (req, res, next) => {
   console.log('authController hit')
   const { email, pass } = req.body;
   //check if user input is not null
-  if (!email || !pass) return res.json({emptySignin: true});
+  if (!email || !pass) return res.status(401).json({emptySignin: true});
   // check if email exists in the database
   const emailQuery = `SELECT * FROM "Users" WHERE email=($1)`;
   const emailValue = [email];
   db.query(emailQuery, emailValue)
   .then(user => {
+    //if user is not found 
+    if (user.rows.length === 0) return res.sendStatus(401);
     // if email is found in database, check if it has matching password
     const password = user.rows[0].pass;
     // if the passwords match, go to the next middleware
     bcrypt.compare(pass, password)
     .then(result => {
-      // if they don't match, send an object to the front end so front end can notify user
-      if(!result) return res.json({wrongPass: true});
+      // if they don't match, send status code to notify front end
+      if(!result) return res.sendStatus(401);
       res.locals.isLoggedIn = true;
       return next();
     })
@@ -47,7 +49,7 @@ authController.isLoggedIn = (req, res, next) => {
 authController.signUp = (req, res, next) => {
   let { email, pass } = req.body;
   // check if values are null
-  if (!email || !pass) return res.json({emptySignUp: true});
+  if (!email || !pass) return res.status(401).json({emptySignUp: true});
   //hash password
   bcrypt.hash(pass, 10, (err, hash) => {
     pass = hash;
@@ -73,7 +75,7 @@ authController.signUp = (req, res, next) => {
             })
           })
       }
-      else return res.json({emailExists: true});
+      else return res.status(409).json({emailExists: true});
     })
     // if email doesn't exist, add it and the password (hashed) to the database
     .catch(err => {
