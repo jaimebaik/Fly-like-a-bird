@@ -21,6 +21,7 @@ module.exports = {
             // secret: false,
           }
       },
+      historyApiFallback: true,
   },
 module: {
     rules: [
