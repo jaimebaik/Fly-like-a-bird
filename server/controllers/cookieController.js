@@ -4,8 +4,8 @@ const db = require('../models/tempModels');
 const cookieController = {};
 
 cookieController.verifyCookie = (req, res, next) => {
-  // const cookie = req.cookies;
-  const {cookie} = req.body;
+  const cookie = req.cookies;
+  // const {cookie} = req.body;
   jwt.verify(cookie, 'test', async (err, decoded) => {
     if (err) {
       return res.sendStatus(401);

@@ -20,7 +20,7 @@ router.get('/isloggedin',
 
 router.post('/createAccount',
   authController.signUp,
-  // cookieController.createCookie,
+  cookieController.createCookie,
   (req, res) => {
     return res.sendStatus(200)
   });
