@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const db = require('../models/tempModels');
 const bcrypt = require('bcryptjs');
 
@@ -24,6 +23,7 @@ authController.userSignin = (req, res, next) => {
       // if they don't match, send status code to notify front end
       if(!result) return res.sendStatus(401);
       res.locals.isLoggedIn = true;
+      res.locals.user = user.rows[0];
       return next();
     })
     .catch(err => {
@@ -62,10 +62,12 @@ authController.signUp = (req, res, next) => {
       // if email already exists, send message to front end
       if (data.rows.length === 0) {
         console.log('rows empty');
-        const userQuery = `INSERT INTO "Users" (email, pass) VALUES ($1, $2)`;
+        const userQuery = `INSERT INTO "Users" (email, pass) VALUES ($1, $2) RETURNING user_id, email`;
         const userValue = [email, pass];
         db.query(userQuery, userValue)
-          .then(() => {
+          .then(user => {
+            res.locals.isLoggedIn = true;
+            res.locals.user = user.rows[0];
             return next();
           })
           .catch(err => {
