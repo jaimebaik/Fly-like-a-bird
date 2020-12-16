@@ -13,11 +13,14 @@ function SignUp() {
         event.preventDefault();
         axios({
             method: 'POST',
-            url: '/users/signup',
-            body: {
+            url: '/users/createAccount',
+            data: {
                 email: email,
                 pass: password
             }
+        })
+        .then((response) => {
+            console.log(response.status)
         })
         .catch(err => {
             if (err) {
