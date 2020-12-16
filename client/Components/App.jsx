@@ -20,8 +20,9 @@ function App() {
         url: '/users/isLoggedIn',
     })
     .then(res => {
+        console.log('axios isloggedin resolved and the res is', res)
         if (res.status === 200) {
-            if (res.isLoggedIn) {
+            if (res.data.isLoggedIn) {
                 setLoggedIn(true)
             }
         }
@@ -29,17 +30,12 @@ function App() {
   }, [])
 
   return (
-      <>
       <Router>
       {isLoggedIn === true ? 
                     <Redirect to="/main" /> : 
                     <Redirect to="/" />
                 }
           <Switch>
-                {/* {isLoggedIn === true ? 
-                    <Redirect to="/main" /> : 
-                    <Redirect to="/" />
-                } */}
               <Route exact path="/">
                   <Login />
               </Route>
@@ -51,7 +47,6 @@ function App() {
               </Route>
           </Switch>
       </Router>
-      </>
   );
 }
 
