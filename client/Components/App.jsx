@@ -20,9 +20,9 @@ function App() {
               <Route path="/signup">
                   <SignUp />
               </Route>
-              {/* <Route path="/main">
-                  <Main />
-              </Route> */}
+              <Route path="/main">
+                  <p>This is the main route</p>
+              </Route>
           </Switch>
       </Router>
   );
