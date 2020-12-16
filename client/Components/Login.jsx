@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { Input } from "@chakra-ui/react";
 
 function Login() {
     const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ errorMsg, setErrorMsg ] = useState('');
+    const [ isLoggedIn, setIsLoggedIn ] = useState(false);
     
     const handleSubmit = (event) => {
         
@@ -20,6 +21,14 @@ function Login() {
             }
         })
         //.then check for status 200 if true redirect to main using react router link
+        .then((response) => {
+            console.log('the response from signin is', response)
+            if (response.status === 200) {
+                console.log("we've reached the response status 200");
+                //redirect to Main using react route link
+                setIsLoggedIn(true);
+            }
+        })
         .catch(err => {
             if (err) {
                 setErrorMsg('Email address or password did not match');
@@ -31,6 +40,11 @@ function Login() {
 
     return (
         <div>
+            {/* is loggedIn === true --> redirect */}
+            {isLoggedIn === true ? 
+                <Redirect to="/main" /> : 
+                <h1>Log in</h1>
+            }
             <form onSubmit={handleSubmit}>
                 <label>Email:
                     <Input type="text" value={email} onChange={(e) => { setEmail(e.target.value) }}></Input>

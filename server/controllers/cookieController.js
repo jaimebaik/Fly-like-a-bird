@@ -5,6 +5,7 @@ const cookieController = {};
 
 cookieController.verifyCookie = (req, res, next) => {
   const {cookie} = req.cookies;
+  console.log('running verify cookiem cookie is', cookie, req.cookies)
   // const {cookie} = req.body;
   //if cookie expired or cookie does not exist
   if(!cookie) return res.sendStatus(401);

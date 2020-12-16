@@ -15,7 +15,7 @@ router.get('/isloggedin',
   // verify cookie middleware
   cookieController.verifyCookie,
   (req, res) => {
-  return res.status(200).json(res.locals.isLoggedIn)
+  return res.status(200).json({isLoggedIn: res.locals.isLoggedIn})
 })
 
 router.post('/createAccount',

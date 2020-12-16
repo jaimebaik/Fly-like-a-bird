@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Input } from "@chakra-ui/react";
+import { Link, Redirect } from 'react-router-dom';
 // import inputs like in login page
 
 function SignUp() {
     const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ errorMsg, setErrorMsg ] = useState('');
-    
+    const [ isLoggedIn, setIsLoggedIn ] = useState(false);
 
     const handleSubmit = (event) => {
         
@@ -20,7 +22,12 @@ function SignUp() {
             }
         })
         .then((response) => {
-            console.log(response.status)
+            console.log('the response from signin is', response)
+            if (response.status === 200) {
+                console.log("we've reached the response status 200");
+                //redirect to Main using react route link
+                setIsLoggedIn(true);
+            }
         })
         .catch(err => {
             if (err) {
@@ -33,16 +40,21 @@ function SignUp() {
 
     return (
         <div>
+            {/* is loggedIn === true --> redirect */}
+            {isLoggedIn === true ? 
+                <Redirect to="/main" /> : 
+                <h1>Create account</h1>
+            }
             <form onSubmit={handleSubmit}>
                 <label>Email:
-                    <input type="text" value={email} onChange={(e) => { setEmail(e.target.value) }}></input>
+                    <Input type="text" value={email} onChange={(e) => { setEmail(e.target.value) }}></Input>
                 </label>
                 <label>Password:
-                    <input type="password" value={password} onChange={(e) => { setPassword(e.target.value) }}></input>
+                    <Input type="password" value={password} onChange={(e) => { setPassword(e.target.value) }}></Input>
                 </label>
-                <input type="submit" value="Sign Up">
+                <Input type="submit" value="Sign Up">
 
-                </input>
+                </Input>
             </form>
             <p>{errorMsg}</p>
         </div>
