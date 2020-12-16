@@ -1,0 +1,87 @@
+const jwt = require('jsonwebtoken');
+const db = require('../models/tempModels');
+const bcrypt = require('bcryptjs');
+
+const authController = {};
+
+authController.userSignin = (req, res, next) => {
+  console.log('authController hit')
+  const { email, pass } = req.body;
+  //check if user input is not null
+  if (!email || !pass) return res.json({emptySignin: true});
+  // check if email exists in the database
+  const emailQuery = `SELECT * FROM "Users" WHERE email=($1)`;
+  const emailValue = [email];
+  db.query(emailQuery, emailValue)
+  .then(user => {
+    // if email is found in database, check if it has matching password
+    const password = user.rows[0].pass;
+    // if the passwords match, go to the next middleware
+    bcrypt.compare(pass, password)
+    .then(result => {
+      // if they don't match, send an object to the front end so front end can notify user
+      if(!result) return res.json({wrongPass: true});
+      res.locals.isLoggedIn = true;
+      return next();
+    })
+    .catch(err => {
+      return next({
+        log: 'bcrypt.compare: ERROR: Error comparing passwords',
+        message: { err: 'Error occurred in bcrypt.compare. Check server logs for more details.'}
+      })
+    })
+  })
+  .catch(err => {
+    return next({
+        log: 'authController.userSignin: ERROR: No email found in database',
+        message: { err: 'Error occurred in authController.userSignin. Check server logs for more details.'}
+  })
+})
+};
+
+authController.isLoggedIn = (req, res, next) => {
+  if(!res.locals.isLoggedIn) res.locals.isLoggedIn = false;
+  return next();
+}
+
+authController.signUp = (req, res, next) => {
+  let { email, pass } = req.body;
+  // check if values are null
+  if (!email || !pass) return res.json({emptySignUp: true});
+  //hash password
+  bcrypt.hash(pass, 10, (err, hash) => {
+    pass = hash;
+  });
+  // check if email already exists in database
+  const emailQuery = `SELECT * FROM "Users" WHERE email=($1)`;
+  const emailValue = [email];
+  db.query(emailQuery, emailValue)
+    .then((data) => {
+      // if email already exists, send message to front end
+      if (data.rows.length === 0) {
+        console.log('rows empty');
+        const userQuery = `INSERT INTO "Users" (email, pass) VALUES ($1, $2)`;
+        const userValue = [email, pass];
+        db.query(userQuery, userValue)
+          .then(() => {
+            return next();
+          })
+          .catch(err => {
+            return next({
+              log: 'authController.signUp: ERROR: Trouble added signup info to database',
+              message: { err: 'Error occurred in authController.signUp. Check server logs for more details.'}
+            })
+          })
+      }
+      else return res.json({emailExists: true});
+    })
+    // if email doesn't exist, add it and the password (hashed) to the database
+    .catch(err => {
+      return next({
+          log: 'authController.signUp: ERROR: Query is not working to check if email already exists in database',
+          message: { err: 'Error occurred in authController.singUp. Check server logs for more details.'}
+      })
+    })
+}
+
+module.exports = authController;
