@@ -14,7 +14,7 @@ function Login() {
         axios({
             method: 'POST',
             url: '/users/signin',
-            body: {
+            data: {
                 email: email,
                 pass: password
             }
