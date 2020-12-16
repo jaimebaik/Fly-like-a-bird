@@ -21,10 +21,8 @@ app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../client/index.html'))
 });
 
-//404 if client goes to incorrect route
-app.use((req, res) => {
-  res.sendStatus(404); //sends not found
-})
+app.use('/*', (req, res) => res.status(200).sendFile(path.resolve(__dirname, '../client/index.html')));
+
 
 // global error handling
 app.use((err, req, res, next) => {
