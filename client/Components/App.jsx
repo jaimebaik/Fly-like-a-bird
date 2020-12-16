@@ -2,18 +2,44 @@ import React from 'react';
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route, 
+  Redirect
 } from "react-router-dom";
 import Login from './Login.jsx';
 import SignUp from './SignUp.jsx';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 // import Main from './Main.jsx';
 
 function App() {
+    const [isLoggedIn, setLoggedIn] = useState(false);
   // creates switchboard
+  useEffect(() => {
+    axios({
+        method: 'GET',
+        url: '/users/isLoggedIn',
+    })
+    .then(res => {
+        if (res.status === 200) {
+            if (res.isLoggedIn) {
+                setLoggedIn(true)
+            }
+        }
+    })
+  }, [])
 
   return (
+      <>
       <Router>
+      {isLoggedIn === true ? 
+                    <Redirect to="/main" /> : 
+                    <Redirect to="/" />
+                }
           <Switch>
+                {/* {isLoggedIn === true ? 
+                    <Redirect to="/main" /> : 
+                    <Redirect to="/" />
+                } */}
               <Route exact path="/">
                   <Login />
               </Route>
@@ -25,6 +51,7 @@ function App() {
               </Route>
           </Switch>
       </Router>
+      </>
   );
 }
 
