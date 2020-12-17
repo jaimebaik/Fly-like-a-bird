@@ -1,0 +1,50 @@
+
+.login, .signUp{
+  background-color: white;
+  display: flex;
+  form {
+    border: 5px solid #0987A0;
+    border-radius: 10px;
+    width: 30%;
+    margin: 15% auto;
+    // top-padding: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  h1, .signUpLink, .loginLink {
+    align-self:flex-start;
+    margin: 2%;
+    padding: 1%;
+  }
+  .signUpLink, .loginLink {
+    border: 3px solid #0987A0;
+    border-radius: 10px;
+  }
+  .label {
+    display: inline-block;
+    width: 100%;
+    margin-left: 7%;
+  }
+  .input {
+    display: inline-block;
+    width: 70%;
+    margin: 3% auto auto 3%;
+  }
+  .email {
+    margin-left: 24%;
+  }
+  .submit {
+    border: none;
+    border-radius: 0;
+    background-color: #0987A0;
+    margin-top: 3%;
+    color: #C4F1F9;
+  }
+  .submit:hover, .signUpLink:hover, .loginLink:hover {
+    background-color: #C4F1F9;
+    color: #065666;
+  }
+}
+
