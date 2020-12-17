@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const userRouter = require('./routers/userRouter');
+const recsRouter = require('./routers/recsRouter');
 
 const app = express();
 // parses body
@@ -12,6 +13,7 @@ app.use(cookieParser());
 
 // routers
 app.use('/users', userRouter);
+app.use('/recs', recsRouter);
 
 //serve the bundle file
 app.use('/build', express.static(path.join(__dirname, '../build/')) )
