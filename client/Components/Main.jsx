@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Input } from "@chakra-ui/react";
-import { Select } from "@chakra-ui/react"
+import { Select } from "@chakra-ui/react";
+import SelectCountry from './SelectCountry.jsx';
 
 
 function Main() {
@@ -12,12 +13,12 @@ function Main() {
   const [countries, setCountries ] = useState('');
 
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const monthOptions = months.map(mon => {
-    return (<option value={mon}>{mon}</option>)
+  const monthOptions = months.map((mon, i) => {
+    return (<option value={mon} key={`month${i}`}>{mon}</option>)
   })
 
   const continents = ["Africa", "Asia", "Europe", "North America", "Oceania", "South America"]
-  const continentOptions = continents.map(continent => (<option value={continent}>{continent}</option>))
+  const continentOptions = continents.map((continent, i) => (<option key={`continents${i}`} value={continent}>{continent}</option>))
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,12 +37,19 @@ function Main() {
   }
 
   const getCountries = (val) => {
+    console.log('axios hit get countries: ', val);
     axios.get(`/recs/months/${val}`)
     .then(res => {
       if (res.status === 200) {
-
-        console.log('hit axios get months response, data: ', res.data)
-        setCountries(res.data.countries)
+       
+        /**format of response is [{'country': countryName}]
+         * objects cannot be passed as react props
+         * conver to array of strings only
+         */
+        const countriesData = res.data.countries.map    (countryObj => (
+          countryObj['country']
+        ));
+        setCountries(countriesData);
       }
     })
   }
@@ -50,10 +58,10 @@ function Main() {
     <div>
       <h2>When are you travelling?</h2>
       <form onSubmit={handleSubmit}>
-        <Select name="month" placeholder="What month are you travelling" isRequired onChange={e => setMonth(e.target.value)}>
+        <Select key="selectmonth" name="month" placeholder="What month are you travelling" isRequired onChange={e => setMonth(e.target.value)}>
           {monthOptions}
         </Select>
-        <Select name="continent" placeholder="Where are you going?" onChange={
+        <Select key="selectcont" name="continent" placeholder="Where are you going?" onChange={
           e => {
             getCountries(e.target.value);
             setContinent(e.target.value);
@@ -62,14 +70,15 @@ function Main() {
           {continentOptions}
         </Select>
         {/* if countries array has values display select for country */}
-        <Select name="temp" placeholder = "What's your ideal temperature?" onChange={e => setTemp(e.target.value)}>
-          <option value="0-30">Freezing!</option>
-          <option value="30-50">Cold</option>
-          <option value="50-60">Chillly</option>
-          <option value="60-70">Mild</option>
-          <option value="60-70">Warm</option>
-          <option value="70-80">Hot</option>
-          <option value="90-120">Oppressive</option>
+        {countries.length ? <SelectCountry  countries={countries}/> : <></>}
+        <Select key="selecttemp" name="temp" placeholder = "What's your ideal temperature?" onChange={e => setTemp(e.target.value)}>
+          <option key={'temp0'} value="0-30">Freezing!</option>
+          <option key={'temp1'} value="30-50">Cold</option>
+          <option key={'temp2'} value="50-60">Chillly</option>
+          <option key={'temp3'} value="60-70">Mild</option>
+          <option key={'temp4'} value="60-70">Warm</option>
+          <option key={'temp5'} value="70-80">Hot</option>
+          <option key={'temp6'} value="90-120">Oppressive</option>
         </Select>
         <Input type="submit" value="Send me my recs!" />
       </form>

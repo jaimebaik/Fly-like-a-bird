@@ -8,8 +8,9 @@ recsController.getMonths = (req,res, next) => {
   //client sends the continent in params
   //controller performs db query for countries that match that continent
   //res.locals stores continents from results query
-  const { continent } = req.params.continent;
-
+  
+  const { continent } = req.params;
+  console.log('hit get Months, continent: ', continent)
   //sql query string
   const queryString = `SELECT "Countries".name as country FROM "Countries" 
   INNER JOIN "Continents" ON "Continents".continent_id="Countries".continent_id
