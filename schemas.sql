@@ -1,3 +1,14 @@
+-- psql -d postgres://iuowxmfk:jF4QcmBMddvDEm5efZ_ypVi24cYriqqt@suleiman.db.elephantsql.com:5432/iuowxmfk -f 'schemas.sql'
+
+DROP TABLE IF EXISTS "Users" CASCADE
+
+DROP TABLE IF EXISTS "Continents" CASCADE
+
+DROP TABLE IF EXISTS "Countries" CASCADE
+DROP TABLE IF EXISTS "Cities" CASCADE
+DROP TABLE IF EXISTS "Months" CASCADE
+DROP TABLE IF EXISTS "Temperatures" CASCADE
+
 CREATE TABLE "Users" (
 	"user_id" serial NOT NULL,
 	"email" VARCHAR(255) NOT NULL UNIQUE,
