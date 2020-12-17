@@ -46,4 +46,11 @@ cookieController.createCookie = (req, res, next) => {
   }
 };
 
+cookieController.deleteCookie = (req, res, next) => {
+  console.log('inside cookieController!!!!');
+  res.clearCookie('cookie');
+  console.log('cookie cleared');
+  return next();
+}
+
 module.exports = cookieController;
