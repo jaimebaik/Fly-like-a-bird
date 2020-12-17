@@ -3,6 +3,10 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const userRouter = require('./routers/userRouter');
 const recsRouter = require('./routers/recsRouter');
+const oauthRouter = require('./routers/oauthRouter');
+
+const passport = require('passport');
+const passportSetup = require('../config/passport-setup');
 
 const app = express();
 // parses body
@@ -11,9 +15,13 @@ app.use(express.urlencoded({ extended: false }));
 // parses cookies
 app.use(cookieParser());
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 // routers
 app.use('/users', userRouter);
 app.use('/recs', recsRouter);
+app.use('/oauth', oauthRouter);
 
 //serve the bundle file
 app.use('/build', express.static(path.join(__dirname, '../build/')) )

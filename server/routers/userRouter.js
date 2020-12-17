@@ -30,4 +30,5 @@ router.post('/createAccount',
 router.get('/logout', cookieController.deleteCookie, (req, res) => {
   return res.sendStatus(200)
 })
+
 module.exports = router;
