@@ -11,6 +11,7 @@ function Main() {
   const [continent, setContinent] = useState('');
   const [apiData, setApiData] = useState('');
   const [countries, setCountries ] = useState('');
+  const [isLoggedIn, setIsLoggedIn ] = useState(true);
 
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const monthOptions = months.map((mon, i) => {
@@ -52,11 +53,20 @@ function Main() {
         setCountries(countriesData);
       }
     })
+  };
+
+  const handleLogout = ()=> {
+    axios.get('/users/logout')
+    .then(res => {
+      if (res.status === 200) setIsLoggedIn(false)
+    })
   }
 
   return(
     <div>
-      <h2>When are you travelling?</h2>
+      {isLoggedIn === false ? <Redirect to="/" /> : <></>}
+      <h2>Give us some info so we can share some recs</h2>
+      <button onClick={handleLogout}>Logout</button>
       <form onSubmit={handleSubmit}>
         <Select key="selectmonth" name="month" placeholder="What month are you travelling" isRequired onChange={e => setMonth(e.target.value)}>
           {monthOptions}
