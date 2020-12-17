@@ -9,7 +9,7 @@ import Login from './Login.jsx';
 import SignUp from './SignUp.jsx';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-// import Main from './Main.jsx';
+import Main from './Main.jsx';
 
 function App() {
     const [isLoggedIn, setLoggedIn] = useState(false);
@@ -43,7 +43,7 @@ function App() {
                   <SignUp />
               </Route>
               <Route path="/main">
-                  <p>This is the main route</p>
+                  <Main />
               </Route>
           </Switch>
       </Router>

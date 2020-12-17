@@ -1,9 +1,39 @@
+const { query } = require('../models/tempModels.js');
 const db = require('../models/tempModels.js');
 
 const recsController = {};
 
 
+recsController.getMonths = (req,res, next) => {
+  //client sends the continent in params
+  //controller performs db query for countries that match that continent
+  //res.locals stores continents from results query
+  
+  const { continent } = req.params;
+  console.log('hit get Months, continent: ', continent)
+  //sql query string
+  const queryString = `SELECT "Countries".name as country FROM "Countries" 
+  INNER JOIN "Continents" ON "Continents".continent_id="Countries".continent_id
+  WHERE "Continents".name=($1);`
+
+  //pass the continent name as the param
+  const params = [continent]
+
+  //perform query
+  db.query(queryString, params)
+  .then(queryResponse => {
+    res.locals.countries = queryResponse.rows;
+    return next();
+  })
+  .catch(err => {
+    message = 'ERROR IN RECS CONTROLLER CHECK LOGS';
+    log = 'Error in query response from getCountries'
+    return next({message, log})
+  })
+}
+
 recsController.getRecs = (req, res, next) => {
+  
   const { temp, continent, country, month } = req.body;
   /** format of temp data
    * "0-30"
@@ -14,42 +44,14 @@ recsController.getRecs = (req, res, next) => {
    * "80-90" --> start: 80, end: 90
    * "90+"
   */
-  let start;
-  let end;
-   switch(temp) {
-     case '0-30': 
-      start = 0;
-      end = 30;
-      break;
-     case '30-50': 
-      start = 30;
-      end = 50;
-      break;
-     case '50-60': 
-      start = 50;
-      end = 60;
-      break;
-     case '60-70': 
-      start = 60;
-      end = 70;
-      break;
-     case '70-80': 
-      start = 70;
-      end = 80;
-      break;
-     case '80-90': 
-      start = 80;
-      end = 90;
-      break;
-     case '90+': 
-      start = 90;
-      end = 999;
-      break;
-   }
+  const splitStr = temp.split("-");
+  let start = Number(splitStr[0]);
+  let end = Number(splitStr[1]);
+  
 
   /**
-   * @params optional country
-   * is country NOT Falsey
+   * @params temp, month, [,continent, country]
+   * if client sends country:
    * join the countries & join cities where country_id match & join temperatures where temp < high && temp > low, match month
    * if country is falsey
    * all above except join continents with all countries & all cities
