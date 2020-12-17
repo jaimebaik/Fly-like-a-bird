@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Input } from "@chakra-ui/react";
 import { Select } from "@chakra-ui/react";
-import SelectCountry from './SelectCountry.jsx';
 
 
 function Main() {
   const [month, setMonth] = useState('');
   const [temp, setTemp] = useState('');
   const [continent, setContinent] = useState('');
+  const [country, setCountry ] = useState('');
   const [apiData, setApiData] = useState('');
   const [countries, setCountries ] = useState('');
   const [isLoggedIn, setIsLoggedIn ] = useState(true);
+
 
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const monthOptions = months.map((mon, i) => {
@@ -22,12 +23,13 @@ function Main() {
   const continentOptions = continents.map((continent, i) => (<option key={`continents${i}`} value={continent}>{continent}</option>))
 
   const handleSubmit = (e) => {
+    console.log('state that we will send to /recs is ', month, temp, continent, country)
     e.preventDefault();
     axios.post('/recs', {
       month,
       temp,
       continent,
-      country: ""
+      country,
     })
     .then(res => {
       if (res.status === 200) {
@@ -42,15 +44,18 @@ function Main() {
     axios.get(`/recs/months/${val}`)
     .then(res => {
       if (res.status === 200) {
-       
+        console.log('hit 200 on recs/months request, data is ', res.data)
         /**format of response is [{'country': countryName}]
          * objects cannot be passed as react props
          * conver to array of strings only
          */
-        const countriesData = res.data.countries.map    (countryObj => (
-          countryObj['country']
-        ));
-        setCountries(countriesData);
+        const countriesOptions = res.data.countries.map((countryObj, i) => {
+          let country = countryObj['country'];
+          
+          return (<option key={`month${i}`} value={country}>{country}</option>)
+          
+        });
+        setCountries(countriesOptions);
       }
     })
   };
@@ -80,7 +85,10 @@ function Main() {
           {continentOptions}
         </Select>
         {/* if countries array has values display select for country */}
-        {countries.length ? <SelectCountry  countries={countries}/> : <></>}
+        
+        <Select placeholder="Is there a country you're most interested in visiting?" onChange={e => setCountry(e.target.value)} >
+          {countries ? countries: <></>}
+        </Select>
         <Select key="selecttemp" name="temp" placeholder = "What's your ideal temperature?" onChange={e => setTemp(e.target.value)}>
           <option key={'temp0'} value="0-30">Freezing!</option>
           <option key={'temp1'} value="30-50">Cold</option>
